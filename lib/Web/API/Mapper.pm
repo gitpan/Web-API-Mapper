@@ -4,7 +4,7 @@ use strict;
 use Any::Moose;
 use Web::API::Mapper::RuleSet;
 
-our $VERSION = '0.021';
+our $VERSION = '0.022';
 
 has route => ( is => 'rw' );
 
@@ -71,14 +71,28 @@ API to web frameworks.
 
 =head1 SYNOPSIS
 
-    my $m = Web::API::Mapper->new(  '/foo' => {
-                    post => [
-                        '/bar/(\d+)' => sub { my $args = shift;  return $1;  }
-                    ]
-                    get =>  [ 
-                        ....
-                    ]
-                })->mount( ... );
+    package YourService;
+    use Any::Moose;
+
+    sub route { {
+        post => [
+            '/bar/(\d+)' => sub { my $args = shift;  return $1;  }
+        ]
+        get =>  [ 
+            ....
+        ]
+    } }
+
+    package main;
+
+    my $service = YourService->new;
+    my $serviceA = OtherService->new;
+    $service->connect( ... );
+
+    my $m = Web::API::Mapper->new
+            ->mount( '/foo' => $service->route )
+            ->mount( '/a' => $serviceA->route );
+
     my $ret = $m->post->dispatch( '/foo/bar' , { ... args ... } );
     my $ret = $m->get->dispatch(  '/foo/bar' );
     my $ret = $m->dispatch( '/foo/bar' , { args ... } );
@@ -173,6 +187,27 @@ is a CodeRef, fallback handler.
     $m->dispatch( '/path/to' , { args ... } );
 
     1;
+
+For example, if you are in Dancer:
+
+    #!/usr/bin/perl
+    use Dancer;
+    use JSON;
+
+    our $m = Web::API::Mapper->new
+        ->mount( '/twitter' => Twitter::API->route )
+        ->mount( '/basepath' , { post => [  ... ] } );
+
+    any '/api/*' => sub {
+        return encode_json( $m->dispatch( $1 , params ) );
+    };
+
+    # request for '/api/twitter/timeline/add' to run!
+
+    dance;
+
+
+
 
 =head1 AUTHOR
 
