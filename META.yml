@@ -1,5 +1,5 @@
 ---
-abstract: 'Web API Mapping Class'
+abstract: 'L<Web::API::Mapper> is an API (Application Programming Interface) convergence class for mapping/dispatching '
 author:
   - 'Cornelius E< cornelius.howl at gmail.com >'
   - 'Cornelius <cornelius.howl@gmail.com>'
@@ -25,4 +25,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/c9s/Web-API-Mapper
-version: 0.02
+version: 0.021
